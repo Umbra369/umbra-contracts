@@ -66,13 +66,11 @@ route it is handed, under strict, auditable safety rules.
 | [`contracts/src/interfaces/Interfaces.sol`](contracts/src/interfaces/Interfaces.sol) | External DEX / token interfaces. |
 | `contracts/src/UmbraRouterV3.sol`, `UmbraRouter.sol` | Prior router versions — readable on-chain, superseded by V5. |
 
-## Audits
+## Security
 
-Internal adversarial review of the router — **no critical or high findings remain.** The surplus-fee
-path's two High findings (signed-quote replay; an unbounded fee cap) were fixed before deploy: each quote
-is single-use (nonce + on-chain digest consumption) and the 0.25% cap is a hard code invariant. See
-[`audits/router-audit-2026-06-22.md`](audits/router-audit-2026-06-22.md). **An external professional audit
-is recommended before significant TVL.** To report a vulnerability privately, see [SECURITY.md](SECURITY.md).
+The router is **non-upgradeable** — each version is a fresh, separately-deployed contract, source-verified
+on-chain (see the address above). Found a vulnerability? Please report it privately — see
+[SECURITY.md](SECURITY.md).
 
 ## Build &amp; verify
 
