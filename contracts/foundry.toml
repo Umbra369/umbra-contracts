@@ -1,0 +1,15 @@
+[profile.default]
+src = "src"
+out = "out"
+test = "test"
+libs = ["lib"]
+optimizer = true
+optimizer_runs = 1000
+via_ir = true
+# PulseChain is Shanghai-era: PUSH0 yes, but no TSTORE/MCOPY (Cancun). Pin Shanghai
+# so solc never emits transient storage or mcopy.
+evm_version = "shanghai"
+fs_permissions = [{ access = "read", path = "./test/fixtures" }]
+
+[rpc_endpoints]
+pulse = "http://127.0.0.1:8545"

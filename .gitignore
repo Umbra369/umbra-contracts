@@ -1,0 +1,8 @@
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+# Dependencies (fetched via `forge install foundry-rs/forge-std`)
+contracts/lib/
+# OS / editor
+.DS_Store
