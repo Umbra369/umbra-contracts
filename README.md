@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/umbra-mark.svg" alt="Umbra" width="104" height="104" />
+  <img src="assets/umbra-social-banner.png" alt="Umbra" width="100%" />
 </p>
 
 <h1 align="center">Umbra — Contracts &amp; Security</h1>
