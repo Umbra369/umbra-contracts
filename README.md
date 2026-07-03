@@ -67,6 +67,16 @@ route it is handed, under strict, auditable safety rules.
 | [`contracts/src/UmbraRouterV5.sol`](contracts/src/UmbraRouterV5.sol) | Prior live router (2026-06-27 → 2026-07-03) — still readable on-chain at [`0x007fd5…`](https://scan.umbra.finance/address/0x007fd5c8182024e55d459dbf0d539df90ba98e53). |
 | `contracts/src/UmbraRouterV3.sol`, `UmbraRouter.sol` | Earlier router versions — readable on-chain, superseded. |
 
+## Reading the contract on-chain
+
+A few notes for anyone exercising the **Read** tab on [scan.umbra.finance](https://scan.umbra.finance/address/0x8AebD5A94D95F71D327D0d2aBb120B20b3a02Ebf) or Sourcify:
+
+- **Array getters need an in-range index.** `v3Factories(i)` and `algebraFactories(i)` are Solidity public arrays — querying an index past the end reverts with no message (that's the EVM, not a bug). Check `v3FactoriesLength()` / `algebraFactoriesLength()` first; today they are `5` and `1`.
+- **Reverts decode as custom errors.** The router uses gas-cheap custom errors (`BadSig`, `BadDirect`, `Expired`, …) rather than revert strings. A UI without this repo's ABI shows them as raw bytes — the selectors are all defined in [`UmbraRouterV6.sol`](contracts/src/UmbraRouterV6.sol).
+- **`V3` in symbol names means Uniswap-V3-style pools** (concentrated liquidity: 9mm, 9inch, pDex, …), never a router version. `v3Factories`, `allowedV3Router`, `BadV3Pool` all refer to the pool type.
+- **The EIP-712 domain version is `"3"`** and stays `"3"` across router releases on purpose: the quote-signing scheme is unchanged since it was introduced, and keeping the domain stable means a router release can never silently invalidate the signing infrastructure. The domain still binds each deployment exactly, because `verifyingContract` is the router's own address.
+- The `@dev` header notes inside the source narrate what each release added (v5 → v6) — release notes preserved in-file, since the deployed source is immutable once verified.
+
 ## Security
 
 The router is **non-upgradeable** — each version is a fresh, separately-deployed contract, source-verified
