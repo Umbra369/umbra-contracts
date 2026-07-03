@@ -45,15 +45,15 @@ route it is handed, under strict, auditable safety rules.
 
 | | |
 |---|---|
-| **Live router** | [`0x007fd5c8182024e55d459dbf0d539df90ba98e53`](https://scan.umbra.finance/address/0x007fd5c8182024e55d459dbf0d539df90ba98e53) (`UmbraRouterV5`) |
+| **Live router** | [`0x8AebD5A94D95F71D327D0d2aBb120B20b3a02Ebf`](https://scan.umbra.finance/address/0x8AebD5A94D95F71D327D0d2aBb120B20b3a02Ebf) (`UmbraRouterV6`) |
 | **Source verification** | Sourcify — exact match |
 | **License** | MIT |
 
 ## The security model
 
-- 🔒 **Non-custodial** — your wallet calls `UmbraRouterV5` directly; the contract holds **no resident funds**. Sizing binds to the input *actually pulled* (balance-delta accounting), never `balanceOf`.
+- 🔒 **Non-custodial** — your wallet calls `UmbraRouterV6` directly; the contract holds **no resident funds**. Sizing binds to the input *actually pulled* (balance-delta accounting), never `balanceOf`.
 - ✅ **One honest floor** — a single `minAmountOut` is enforced on the **real output delta**, so you can never receive less than you agreed to. A route that would fall short reverts.
-- 🪙 **Fee-on-transfer safe** — delta accounting handles taxed / reflection tokens correctly across every hop.
+- 🪙 **Fee-on-transfer safe, single-tax both directions** — delta accounting handles taxed / reflection tokens across every hop, and V6 pays the transfer tax **once** on both sides: `FIRST_HOP_DIRECT` funds the first pool straight from your wallet (sells), and `LAST_HOP_DIRECT` has the final pool pay your wallet directly (buys). Buying a 5% tax token costs ~5%, not ~10%.
 - 💠 **No hidden slippage capture** — the contract doesn't skim positive slippage. The only fee is a transparent **surplus share**: when Umbra's split route beats the baseline, it takes **50% of that surplus, hard-capped at 0.25% of output** (a code invariant), attested per-quote by a single-use EIP-712 signature so the baseline can't be tampered with. You net more than a standard route even after the fee.
 - 🧱 **Guarded externals** — Balancer / Stable / Tide vault calls are allowlisted; a factory-authenticated, single-shot callback guards each V3 / Algebra hop.
 
@@ -61,10 +61,11 @@ route it is handed, under strict, auditable safety rules.
 
 | File | Role |
 |---|---|
-| [`contracts/src/UmbraRouterV5.sol`](contracts/src/UmbraRouterV5.sol) | The live execution router — V2/V3, switch.win/Algebra, Balancer, PulseX Stable, Balancer-V3/Tide, native PLS wrap/unwrap, Permit2, FoT single-tax fast-path, EIP-712 surplus-fee seam. |
+| [`contracts/src/UmbraRouterV6.sol`](contracts/src/UmbraRouterV6.sol) | The live execution router — V2/V3, switch.win/Algebra, Balancer, PulseX Stable, Balancer-V3/Tide, native PLS wrap/unwrap, Permit2, FoT single-tax delivery in **both** directions (`FIRST_HOP_DIRECT` + `LAST_HOP_DIRECT`), EIP-712 surplus-fee seam. |
 | [`contracts/src/Simulator.sol`](contracts/src/Simulator.sol) | Read-only swap simulator used to realize a route's true post-tax output before signing. |
 | [`contracts/src/interfaces/Interfaces.sol`](contracts/src/interfaces/Interfaces.sol) | External DEX / token interfaces. |
-| `contracts/src/UmbraRouterV3.sol`, `UmbraRouter.sol` | Prior router versions — readable on-chain, superseded by V5. |
+| [`contracts/src/UmbraRouterV5.sol`](contracts/src/UmbraRouterV5.sol) | Prior live router (2026-06-27 → 2026-07-03) — still readable on-chain at [`0x007fd5…`](https://scan.umbra.finance/address/0x007fd5c8182024e55d459dbf0d539df90ba98e53). |
+| `contracts/src/UmbraRouterV3.sol`, `UmbraRouter.sol` | Earlier router versions — readable on-chain, superseded. |
 
 ## Security
 
@@ -81,7 +82,7 @@ forge test                            # router tests (several fork PulseChain)
 ```
 
 To confirm the deployed router matches this source, check the Sourcify verification on the
-[contract page](https://scan.umbra.finance/address/0x007fd5c8182024e55d459dbf0d539df90ba98e53).
+[contract page](https://scan.umbra.finance/address/0x8AebD5A94D95F71D327D0d2aBb120B20b3a02Ebf).
 
 ## License
 

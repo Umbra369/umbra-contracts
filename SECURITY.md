@@ -1,6 +1,6 @@
 # Security Policy
 
-The `UmbraRouterV5` contract holds user funds for the duration of a swap, so it is the highest-stakes
+The `UmbraRouterV6` contract holds user funds for the duration of a swap, so it is the highest-stakes
 component of Umbra. Responsible disclosure is genuinely appreciated.
 
 ## Reporting a vulnerability
@@ -16,7 +16,7 @@ We aim to acknowledge within 48 hours and to keep you updated through triage and
 
 In scope:
 
-- `contracts/src/UmbraRouterV5.sol` (the live router) and the contracts it depends on
+- `contracts/src/UmbraRouterV6.sol` (the live router) and the contracts it depends on
   (`Simulator.sol`, `interfaces/Interfaces.sol`, `lib/*`).
 - Anything that could cause loss of user funds, a swap delivering less than its enforced
   `minAmountOut`, an unauthorized state change, or the surplus fee exceeding its 0.25% cap.
